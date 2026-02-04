@@ -1,0 +1,42 @@
+<section class="section">
+  <div class="card">
+    <div class="card-header">
+      <h2>User Shops</h2>
+      <span class="badge">Admin</span>
+    </div>
+    <div class="grid kpis">
+      <div>
+        <label>User ID</label>
+        <input [(ngModel)]="userId" type="number" />
+      </div>
+      <div>
+        <label>Domain filter</label>
+        <input [(ngModel)]="domain" type="text" />
+      </div>
+      <div style="align-self: end;">
+        <button (click)="load()">Load</button>
+      </div>
+    </div>
+
+    <table class="table" style="margin-top: 16px;">
+      <thead>
+        <tr>
+          <th>Shop ID</th>
+          <th>Domain</th>
+          <th>Timezone</th>
+          <th>Currency</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let shop of shops">
+          <td>{{shop.shopId}}</td>
+          <td>{{shop.shopDomain}}</td>
+          <td>{{shop.timezone}}</td>
+          <td>{{shop.currency}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top: 8px;">Total: {{total}}</p>
+  </div>
+</section>

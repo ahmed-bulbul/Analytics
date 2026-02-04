@@ -1,0 +1,40 @@
+<section class="section">
+  <div class="card">
+    <div class="card-header">
+      <h2>Users</h2>
+      <span class="badge">Admin</span>
+    </div>
+    <div class="grid kpis">
+      <div>
+        <label>Shop ID</label>
+        <input [(ngModel)]="shopId" type="number" />
+      </div>
+      <div>
+        <label>Email filter</label>
+        <input [(ngModel)]="email" type="text" />
+      </div>
+      <div style="align-self: end;">
+        <button (click)="load()">Load</button>
+      </div>
+    </div>
+
+    <table class="table" style="margin-top: 16px;">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Email</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{user.userId}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.role}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top: 8px;">Total: {{total}}</p>
+  </div>
+</section>

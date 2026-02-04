@@ -1,0 +1,29 @@
+<section class="section">
+  <div class="card">
+    <div class="card-header">
+      <h2>Shop Onboarding</h2>
+      <span class="badge">OAuth</span>
+    </div>
+    <div class="grid kpis">
+      <div>
+        <label>Shop Domain</label>
+        <input [(ngModel)]="onboardShopDomain" type="text" placeholder="your-shop.myshopify.com" />
+      </div>
+      <div>
+        <label>Admin Email</label>
+        <input [(ngModel)]="onboardAdminEmail" type="email" placeholder="owner@shop.com" />
+      </div>
+      <div>
+        <label>Admin Password</label>
+        <input [(ngModel)]="onboardAdminPassword" type="password" placeholder="Password" />
+      </div>
+      <div style="align-self: end;">
+        <button (click)="onboard()">Create Shop & Get OAuth Link</button>
+      </div>
+    </div>
+    <p *ngIf="onboardMessage" style="margin-top: 10px;">{{onboardMessage}}</p>
+    <div *ngIf="onboardOauthUrl" style="margin-top: 8px;">
+      <a [href]="onboardOauthUrl" target="_blank">Connect Shopify (OAuth)</a>
+    </div>
+  </div>
+</section>

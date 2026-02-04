@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { KpiResponse, GrowthResponse, LtvResponse, CohortRow, ChannelRow } from '../models/dashboard.models';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DashboardService {
   private baseUrl = `${environment.apiUrl}/dashboard`;
 

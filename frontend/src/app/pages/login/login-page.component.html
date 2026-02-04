@@ -1,0 +1,20 @@
+<div class="page">
+  <div class="card auth-card">
+    <h1>Welcome back</h1>
+    <p>Sign in to view your Shopify analytics.</p>
+
+    <div class="field">
+      <label>Email</label>
+      <input [(ngModel)]="email" type="email" />
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input [(ngModel)]="password" type="password" />
+    </div>
+
+    <button (click)="login()">Login</button>
+
+    <p *ngIf="error" class="error">{{error}}</p>
+  </div>
+</div>

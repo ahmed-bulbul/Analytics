@@ -1,0 +1,20 @@
+.page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: min(420px, 90vw);
+  text-align: left;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.error {
+  margin-top: 12px;
+  color: #b3261e;
+}
