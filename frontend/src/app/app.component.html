@@ -1,0 +1,257 @@
+<div class="container">
+  <section class="hero">
+    <h1>Shopify Analytics Dashboard</h1>
+    <p>Profit-first metrics with Shopify as the source of truth.</p>
+    <div class="pill-row">
+      <span class="pill">Revenue = gross sales</span>
+      <span class="pill">Net Sales = product revenue after discounts & refunds</span>
+      <span class="pill">MER = Shopify Revenue / Ad Spend</span>
+    </div>
+  </section>
+
+  <section class="section" *ngIf="!kpis">
+    <div class="card">
+      <div class="card-header">
+        <h2>Demo Login</h2>
+        <span class="badge">JWT</span>
+      </div>
+      <div class="grid kpis">
+        <div>
+          <label>Email</label>
+          <input [(ngModel)]="email" type="email" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input [(ngModel)]="password" type="password" />
+        </div>
+        <div style="align-self: end;">
+          <button (click)="login()">Login</button>
+        </div>
+      </div>
+      <p *ngIf="error" style="color: #b3261e; margin-top: 10px;">{{error}}</p>
+    </div>
+  </section>
+
+  <section class="section" *ngIf="kpis">
+    <div class="card">
+      <div class="card-header">
+        <h2>Session</h2>
+        <button (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" *ngIf="kpis">
+    <div class="card">
+      <div class="card-header">
+        <h2>User Registration</h2>
+        <span class="badge">Admin Only</span>
+      </div>
+      <div class="grid kpis">
+        <div>
+          <label>Email</label>
+          <input [(ngModel)]="registerEmail" type="email" placeholder="new@shop.com" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input [(ngModel)]="registerPassword" type="password" placeholder="Password" />
+        </div>
+        <div>
+          <label>Role</label>
+          <select [(ngModel)]="registerRole">
+            <option value="VIEWER">VIEWER</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </div>
+        <div style="align-self: end;">
+          <button (click)="register()">Create User</button>
+        </div>
+      </div>
+      <p *ngIf="registerMessage" style="margin-top: 10px;">{{registerMessage}}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <div class="card-header">
+        <h2>Shop Onboarding</h2>
+        <span class="badge">OAuth</span>
+      </div>
+      <div class="grid kpis">
+        <div>
+          <label>Shop Domain</label>
+          <input [(ngModel)]="onboardShopDomain" type="text" placeholder="your-shop.myshopify.com" />
+        </div>
+        <div>
+          <label>Admin Email</label>
+          <input [(ngModel)]="onboardAdminEmail" type="email" placeholder="owner@shop.com" />
+        </div>
+        <div>
+          <label>Admin Password</label>
+          <input [(ngModel)]="onboardAdminPassword" type="password" placeholder="Password" />
+        </div>
+        <div style="align-self: end;">
+          <button (click)="onboard()">Create Shop & Get OAuth Link</button>
+        </div>
+      </div>
+      <p *ngIf="onboardMessage" style="margin-top: 10px;">{{onboardMessage}}</p>
+      <div *ngIf="onboardOauthUrl" style="margin-top: 8px;">
+        <a [href]="onboardOauthUrl" target="_blank">Connect Shopify (OAuth)</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <div class="card-header">
+        <h2>Core KPIs</h2>
+        <span class="badge">Shopify Derived</span>
+      </div>
+      <div class="grid kpis">
+        <div>
+          <h3>${{kpis?.revenueGross ?? 0 | number:'1.0-2'}}</h3>
+          <p>Revenue (Gross)</p>
+        </div>
+        <div>
+          <h3>${{kpis?.netSales ?? 0 | number:'1.0-2'}}</h3>
+          <p>Net Sales</p>
+        </div>
+        <div>
+          <h3>{{kpis?.orders ?? 0}}</h3>
+          <p>Orders</p>
+        </div>
+        <div>
+          <h3>${{kpis?.aov ?? 0 | number:'1.0-2'}}</h3>
+          <p>AOV</p>
+        </div>
+        <div>
+          <h3>${{kpis?.adSpend ?? 0 | number:'1.0-2'}}</h3>
+          <p>Total Ad Spend</p>
+        </div>
+        <div>
+          <h3>{{kpis?.mer ?? 0 | number:'1.0-3'}}</h3>
+          <p>MER</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <div class="card-header">
+        <h2>Growth Overview</h2>
+        <span class="badge">New vs Returning</span>
+      </div>
+      <div class="grid kpis">
+        <div>
+          <h3>{{growth?.newOrders ?? 0}}</h3>
+          <p>New Orders</p>
+        </div>
+        <div>
+          <h3>{{growth?.returningOrders ?? 0}}</h3>
+          <p>Returning Orders</p>
+        </div>
+        <div>
+          <h3>${{growth?.newRevenue ?? 0 | number:'1.0-2'}}</h3>
+          <p>New Revenue</p>
+        </div>
+        <div>
+          <h3>${{growth?.returningRevenue ?? 0 | number:'1.0-2'}}</h3>
+          <p>Returning Revenue</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <div class="card-header">
+        <h2>Customer Value</h2>
+        <span class="badge">LTV</span>
+      </div>
+      <div class="grid kpis">
+        <div>
+          <h3>${{ltv?.averageCustomerLtv ?? 0 | number:'1.0-2'}}</h3>
+          <p>Average Customer LTV</p>
+        </div>
+        <div>
+          <h3>${{ltv?.ltv30 ?? 0 | number:'1.0-2'}}</h3>
+          <p>LTV 30 Days</p>
+        </div>
+        <div>
+          <h3>${{ltv?.ltv60 ?? 0 | number:'1.0-2'}}</h3>
+          <p>LTV 60 Days</p>
+        </div>
+        <div>
+          <h3>${{ltv?.ltv90 ?? 0 | number:'1.0-2'}}</h3>
+          <p>LTV 90 Days</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <div class="card-header">
+        <h2>Cohort LTV</h2>
+        <span class="badge">Cumulative Net Sales</span>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Cohort Month</th>
+            <th>Months Since First Order</th>
+            <th>Customers</th>
+            <th>Net Sales</th>
+            <th>Cumulative Net Sales</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of cohorts">
+            <td>{{row.cohortMonth}}</td>
+            <td>{{row.monthsSinceFirstOrder}}</td>
+            <td>{{row.customersInCohort}}</td>
+            <td>${{row.netSales | number:'1.0-2'}}</td>
+            <td>${{row.cumulativeNetSales | number:'1.0-2'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <div class="card-header">
+        <h2>Channel Performance</h2>
+        <span class="badge">Platform-Attributed</span>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>Date</th>
+            <th>Spend</th>
+            <th>Impressions</th>
+            <th>Clicks</th>
+            <th>Attributed Orders</th>
+            <th>Attributed Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of channels">
+            <td>{{row.channelName}}</td>
+            <td>{{row.date}}</td>
+            <td>${{row.spend | number:'1.0-2'}}</td>
+            <td>{{row.impressions}}</td>
+            <td>{{row.clicks}}</td>
+            <td>{{row.attributedOrders}}</td>
+            <td>${{row.attributedRevenue | number:'1.0-2'}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 10px;">
+        Attributed metrics are platform-reported and may not reconcile with Shopify revenue.
+      </p>
+    </div>
+  </section>
+</div>

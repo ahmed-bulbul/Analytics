@@ -1,0 +1,53 @@
+#server:
+#  port: 8080
+#
+#spring:
+#  datasource:
+#    url: jdbc:h2:mem:analytics;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password: ""
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2
+#  flyway:
+#    enabled: false
+#  sql:
+#    init:
+#      mode: always
+#
+#logging:
+#  level:
+#    org.springframework.jdbc.core: INFO
+#    org.hibernate.SQL: DEBUG
+
+
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/nimbuzz
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      platform: postgres
+
+logging:
+  level:
+    org.springframework.jdbc.core: INFO
+    org.hibernate.SQL: DEBUG
