@@ -1,10 +1,13 @@
 package com.ecom.analytics.service;
 
 import com.ecom.analytics.config.ShopifyConfig;
+import com.ecom.analytics.model.Shop;
+import com.ecom.analytics.model.ShopOAuthState;
+import com.ecom.analytics.repository.ShopOAuthStateRepository;
 import com.ecom.analytics.repository.ShopRepository;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import com.ecom.analytics.repository.OAuthStateRepository;
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.HttpHeaders;
@@ -16,13 +19,18 @@ import org.springframework.web.client.RestClient;
 public class ShopifyOAuthService {
   private final ShopifyConfig config;
   private final ShopRepository shopRepository;
-  private final OAuthStateRepository oauthStateRepository;
+  private final ShopOAuthStateRepository oauthStateRepository;
+  private final CryptoService cryptoService;
   private final RestClient restClient;
 
-  public ShopifyOAuthService(ShopifyConfig config, ShopRepository shopRepository, OAuthStateRepository oauthStateRepository) {
+  public ShopifyOAuthService(ShopifyConfig config,
+                             ShopRepository shopRepository,
+                             ShopOAuthStateRepository oauthStateRepository,
+                             CryptoService cryptoService) {
     this.config = config;
     this.shopRepository = shopRepository;
     this.oauthStateRepository = oauthStateRepository;
+    this.cryptoService = cryptoService;
     this.restClient = RestClient.builder()
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
@@ -36,7 +44,7 @@ public class ShopifyOAuthService {
       throw new IllegalStateException("Shopify OAuth client secret is not configured. Set SHOPIFY_CLIENT_SECRET in backend/.env");
     }
     String state = UUID.randomUUID().toString();
-    oauthStateRepository.saveState(shopId, state);
+    oauthStateRepository.save(new ShopOAuthState(shopId, state, Instant.now()));
 
     String scopes = URLEncoder.encode(config.getOauthScopes(), StandardCharsets.UTF_8);
     String redirect = URLEncoder.encode(config.getOauthRedirectUri(), StandardCharsets.UTF_8);
@@ -49,13 +57,17 @@ public class ShopifyOAuthService {
   }
 
   public void handleCallback(long shopId, String code, String state) {
-    String expected = oauthStateRepository.findState(shopId).orElse(null);
+    String expected = oauthStateRepository.findById(shopId)
+        .map(ShopOAuthState::getState)
+        .orElse(null);
     if (expected == null || !expected.equals(state)) {
       throw new IllegalArgumentException("Invalid OAuth state");
     }
 
-    String shopDomain = shopRepository.findShopDomain(shopId);
-    String url = "https://" + shopDomain + "/admin/oauth/access_token";
+    Shop shop = shopRepository.findById(shopId)
+        .orElseThrow(() -> new IllegalStateException("Shop not found"));
+
+    String url = "https://" + shop.getShopDomain() + "/admin/oauth/access_token";
     Map<String, Object> payload = Map.of(
         "client_id", config.getOauthClientId(),
         "client_secret", config.getOauthClientSecret(),
@@ -74,12 +86,20 @@ public class ShopifyOAuthService {
     }
 
     String token = response.get("access_token").toString();
-    shopRepository.storeShopifyToken(shopId, token, config.getOauthScopes());
-    oauthStateRepository.deleteState(shopId);
+    CryptoService.EncryptedPayload encrypted = cryptoService.encrypt(token);
+
+    shop.setShopifyAccessTokenEncrypted(encrypted.cipherTextBase64());
+    shop.setShopifyAccessTokenIv(encrypted.ivBase64());
+    shop.setShopifyScopes(config.getOauthScopes());
+    shop.setShopifyInstalledAt(Instant.now());
+    shopRepository.save(shop);
+
+    oauthStateRepository.deleteById(shopId);
   }
 
   public long resolveShopIdByState(String state) {
-    return oauthStateRepository.findShopIdByState(state)
+    return oauthStateRepository.findByState(state)
+        .map(ShopOAuthState::getShopId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid OAuth state"));
   }
 }

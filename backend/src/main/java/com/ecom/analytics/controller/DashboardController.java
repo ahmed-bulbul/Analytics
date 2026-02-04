@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/dashboard")
 public class DashboardController {
   private final DashboardService service;
-  private final com.ecom.analytics.repository.UserShopRepository userShopRepository;
+  private final com.ecom.analytics.service.AccessService accessService;
 
-  public DashboardController(DashboardService service, com.ecom.analytics.repository.UserShopRepository userShopRepository) {
+  public DashboardController(DashboardService service, com.ecom.analytics.service.AccessService accessService) {
     this.service = service;
-    this.userShopRepository = userShopRepository;
+    this.accessService = accessService;
   }
 
   @GetMapping("/kpis")
@@ -90,7 +90,7 @@ public class DashboardController {
       if (auth == null || !(auth.getPrincipal() instanceof com.ecom.analytics.security.AuthPrincipal principal)) {
         throw new IllegalArgumentException("shopId is required");
       }
-      boolean allowed = userShopRepository.hasAccess(principal.userId(), shopId);
+      boolean allowed = accessService.hasAccess(principal.userId(), shopId);
       if (!allowed) {
         throw new IllegalArgumentException("Not authorized for this shop");
       }

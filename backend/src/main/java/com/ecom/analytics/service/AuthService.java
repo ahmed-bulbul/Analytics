@@ -4,44 +4,49 @@ import com.ecom.analytics.dto.LoginRequest;
 import com.ecom.analytics.dto.LoginResponse;
 import com.ecom.analytics.dto.RegisterRequest;
 import com.ecom.analytics.dto.RegisterResponse;
-import com.ecom.analytics.model.AppUser;
+import com.ecom.analytics.model.User;
+import com.ecom.analytics.model.UserShop;
+import com.ecom.analytics.repository.ShopRepository;
 import com.ecom.analytics.repository.UserRepository;
 import com.ecom.analytics.repository.UserShopRepository;
-import com.ecom.analytics.repository.UserWriteRepository;
 import java.util.Optional;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
   private final UserRepository userRepository;
-  private final UserWriteRepository userWriteRepository;
   private final UserShopRepository userShopRepository;
+  private final ShopRepository shopRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
 
-  public AuthService(UserRepository userRepository, UserWriteRepository userWriteRepository, UserShopRepository userShopRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+  public AuthService(UserRepository userRepository,
+                     UserShopRepository userShopRepository,
+                     ShopRepository shopRepository,
+                     PasswordEncoder passwordEncoder,
+                     JwtService jwtService) {
     this.userRepository = userRepository;
-    this.userWriteRepository = userWriteRepository;
     this.userShopRepository = userShopRepository;
+    this.shopRepository = shopRepository;
     this.passwordEncoder = passwordEncoder;
     this.jwtService = jwtService;
   }
 
   public LoginResponse login(LoginRequest request) {
-    Optional<AppUser> userOpt = userRepository.findByEmail(request.email());
+    Optional<User> userOpt = userRepository.findByEmailIgnoreCase(request.email());
     if (userOpt.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
     }
-    AppUser user = userOpt.get();
-    if (!passwordEncoder.matches(request.password(), user.passwordHash())) {
+    User user = userOpt.get();
+    if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
     }
 
-    String token = jwtService.generateToken(user.email(), user.primaryShopId(), user.role(), user.id());
-    return new LoginResponse(token, user.primaryShopId(), user.email());
+    String token = jwtService.generateToken(user.getEmail(), user.getPrimaryShop().getId(), user.getRole(), user.getId());
+    return new LoginResponse(token, user.getPrimaryShop().getId(), user.getEmail());
   }
 
   public RegisterResponse register(RegisterRequest request) {
@@ -54,11 +59,26 @@ public class AuthService {
     if (request.shopId() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "shopId is required");
     }
+    if (userRepository.findByEmailIgnoreCase(request.email()).isPresent()) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+    }
+
+    var shop = shopRepository.findById(request.shopId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop not found"));
+
     String role = normalizeRole(request.role());
     String hash = passwordEncoder.encode(request.password());
-    long id = userWriteRepository.insertUser(request.email().toLowerCase(), hash, request.shopId(), role);
-    userShopRepository.addUserToShop(id, request.shopId());
-    return new RegisterResponse(id, request.email().toLowerCase(), role, request.shopId());
+
+    User user = new User();
+    user.setEmail(request.email().toLowerCase());
+    user.setPasswordHash(hash);
+    user.setPrimaryShop(shop);
+    user.setRole(role);
+    user = userRepository.save(user);
+
+    userShopRepository.save(new UserShop(user, shop));
+
+    return new RegisterResponse(user.getId(), user.getEmail(), role, shop.getId());
   }
 
   private String normalizeRole(String role) {

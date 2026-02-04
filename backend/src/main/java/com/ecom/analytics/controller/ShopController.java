@@ -11,6 +11,9 @@ import com.ecom.analytics.dto.UserShopRow;
 import com.ecom.analytics.service.ShopOnboardingService;
 import com.ecom.analytics.service.AccessService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +26,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class ShopController {
   private final ShopOnboardingService onboardingService;
   private final AccessService accessService;
+  private final String frontendUrl;
 
-  public ShopController(ShopOnboardingService onboardingService, AccessService accessService) {
+  public ShopController(
+      ShopOnboardingService onboardingService,
+      AccessService accessService,
+      @Value("${app.frontend-url}") String frontendUrl
+  ) {
     this.onboardingService = onboardingService;
     this.accessService = accessService;
+    this.frontendUrl = frontendUrl;
   }
 
   @PostMapping("/onboard")
@@ -40,7 +49,10 @@ public class ShopController {
       @RequestParam String state
   ) {
     onboardingService.handleCallbackByState(code, state);
-    return ResponseEntity.ok("Shopify connected");
+    String redirect = frontendUrl + "?shopify=connected";
+    return ResponseEntity.status(HttpStatus.FOUND)
+        .header(HttpHeaders.LOCATION, redirect)
+        .build();
   }
 
   @PostMapping("/grant-access")

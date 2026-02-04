@@ -2,73 +2,102 @@ package com.ecom.analytics.service;
 
 import com.ecom.analytics.dto.GrantAccessRequest;
 import com.ecom.analytics.dto.GrantAccessResponse;
+import com.ecom.analytics.dto.PageResult;
 import com.ecom.analytics.dto.RevokeAccessRequest;
 import com.ecom.analytics.dto.RevokeAccessResponse;
-import com.ecom.analytics.dto.PageResult;
 import com.ecom.analytics.dto.ShopRow;
 import com.ecom.analytics.dto.UserShopRow;
+import com.ecom.analytics.model.Shop;
+import com.ecom.analytics.model.User;
+import com.ecom.analytics.model.UserShop;
+import com.ecom.analytics.repository.ShopRepository;
+import com.ecom.analytics.repository.UserRepository;
 import com.ecom.analytics.repository.UserShopRepository;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AccessService {
   private final UserShopRepository userShopRepository;
+  private final UserRepository userRepository;
+  private final ShopRepository shopRepository;
 
-  public AccessService(UserShopRepository userShopRepository) {
+  public AccessService(UserShopRepository userShopRepository, UserRepository userRepository, ShopRepository shopRepository) {
     this.userShopRepository = userShopRepository;
+    this.userRepository = userRepository;
+    this.shopRepository = shopRepository;
   }
 
   public GrantAccessResponse grantAccess(GrantAccessRequest request) {
-    userShopRepository.addUserToShop(request.userId(), request.shopId());
+    User user = userRepository.findById(request.userId())
+        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    Shop shop = shopRepository.findById(request.shopId())
+        .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
+    userShopRepository.save(new UserShop(user, shop));
     return new GrantAccessResponse(request.userId(), request.shopId(), "granted");
   }
 
   public RevokeAccessResponse revokeAccess(RevokeAccessRequest request) {
-    userShopRepository.removeUserFromShop(request.userId(), request.shopId());
+    userShopRepository.deleteById(new com.ecom.analytics.model.UserShopId(request.userId(), request.shopId()));
     return new RevokeAccessResponse(request.userId(), request.shopId(), "revoked");
   }
 
   public PageResult<ShopRow> listShopsForUser(long userId, String domainFilter, int limit, int offset, String sortDir) {
-    var items = userShopRepository.listShopsForUser(userId, domainFilter, limit, offset, sortDir);
+    var pageable = PageRequest.of(offset / limit, limit);
+    List<ShopRow> items = userShopRepository.findShopsForUser(userId, domainFilter, pageable);
     long total = userShopRepository.countShopsForUser(userId, domainFilter);
     return new PageResult<>(items, total, limit, offset, null);
   }
 
   public PageResult<UserShopRow> listUsersForShop(long shopId, String emailFilter, int limit, int offset, String sortDir) {
-    var items = userShopRepository.listUsersForShop(shopId, emailFilter, limit, offset, sortDir);
+    var pageable = PageRequest.of(offset / limit, limit);
+    List<UserShopRow> items = userShopRepository.findUsersForShop(shopId, emailFilter, pageable);
     long total = userShopRepository.countUsersForShop(shopId, emailFilter);
     return new PageResult<>(items, total, limit, offset, null);
   }
 
   public PageResult<UserShopRow> listUsersForShopCursor(long shopId, String emailFilter, int limit, String sortDir, String cursor) {
-    java.util.List<UserShopRow> items;
+    List<UserShopRow> items;
+    var pageable = PageRequest.of(0, limit);
     if (cursor == null || cursor.isBlank()) {
-      items = userShopRepository.listUsersForShopFirstPage(shopId, emailFilter, sortDir, limit);
+      items = userShopRepository.findUsersForShop(shopId, emailFilter, pageable);
     } else {
       CursorParts parts = decodeCursor(cursor);
-      items = userShopRepository.listUsersForShopKeyset(
-          shopId, emailFilter, sortDir, parts.value(), parts.id(), limit);
+      if ("DESC".equalsIgnoreCase(sortDir)) {
+        items = userShopRepository.findUsersForShopCursorDesc(shopId, emailFilter, parts.value(), parts.id(), pageable);
+      } else {
+        items = userShopRepository.findUsersForShopCursorAsc(shopId, emailFilter, parts.value(), parts.id(), pageable);
+      }
     }
     String nextCursor = buildUserCursor(items);
     return new PageResult<>(items, null, limit, null, nextCursor);
   }
 
   public PageResult<ShopRow> listShopsForUserCursor(long userId, String domainFilter, int limit, String sortDir, String cursor) {
-    java.util.List<ShopRow> items;
+    List<ShopRow> items;
+    var pageable = PageRequest.of(0, limit);
     if (cursor == null || cursor.isBlank()) {
-      items = userShopRepository.listShopsForUserFirstPage(userId, domainFilter, sortDir, limit);
+      items = userShopRepository.findShopsForUser(userId, domainFilter, pageable);
     } else {
       CursorParts parts = decodeCursor(cursor);
-      items = userShopRepository.listShopsForUserKeyset(
-          userId, domainFilter, sortDir, parts.value(), parts.id(), limit);
+      if ("DESC".equalsIgnoreCase(sortDir)) {
+        items = userShopRepository.findShopsForUserCursorDesc(userId, domainFilter, parts.value(), parts.id(), pageable);
+      } else {
+        items = userShopRepository.findShopsForUserCursorAsc(userId, domainFilter, parts.value(), parts.id(), pageable);
+      }
     }
     String nextCursor = buildShopCursor(items);
     return new PageResult<>(items, null, limit, null, nextCursor);
   }
 
-  private String buildUserCursor(java.util.List<UserShopRow> items) {
+  public boolean hasAccess(long userId, long shopId) {
+    return userShopRepository.existsByIdUserIdAndIdShopId(userId, shopId);
+  }
+
+  private String buildUserCursor(List<UserShopRow> items) {
     if (items.isEmpty()) {
       return null;
     }
@@ -76,7 +105,7 @@ public class AccessService {
     return encodeCursor(last.email(), last.userId());
   }
 
-  private String buildShopCursor(java.util.List<ShopRow> items) {
+  private String buildShopCursor(List<ShopRow> items) {
     if (items.isEmpty()) {
       return null;
     }
