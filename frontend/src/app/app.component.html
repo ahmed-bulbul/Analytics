@@ -2,10 +2,10 @@
   <aside class="sidebar">
     <div class="brand">Ecom Analytics</div>
     <nav class="nav">
-      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="/onboarding" routerLinkActive="active">Shop Onboarding</a>
-      <a routerLink="/users" routerLinkActive="active">Users</a>
-      <a routerLink="/shops" routerLinkActive="active">User Shops</a>
+      <a *ngIf="isLoggedIn" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a *ngIf="isLoggedIn" routerLink="/onboarding" routerLinkActive="active">Shop Onboarding</a>
+      <a *ngIf="isLoggedIn" routerLink="/users" routerLinkActive="active">Users</a>
+      <a *ngIf="isLoggedIn" routerLink="/shops" routerLinkActive="active">User Shops</a>
       <a *ngIf="!isLoggedIn" routerLink="/login" routerLinkActive="active">Login</a>
     </nav>
     <div class="sidebar-footer" *ngIf="isLoggedIn">

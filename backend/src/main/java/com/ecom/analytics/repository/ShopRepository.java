@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ShopRepository extends JpaRepository<Shop, Long> {
   Optional<Shop> findByShopDomainIgnoreCase(String shopDomain);
   boolean existsByShopDomainIgnoreCase(String shopDomain);
+  java.util.List<Shop> findByShopifyAccessTokenEncryptedIsNotNull();
 }

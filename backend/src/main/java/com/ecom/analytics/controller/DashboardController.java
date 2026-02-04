@@ -84,7 +84,7 @@ public class DashboardController {
     return new CompareResponse(current, previous);
   }
 
-  private long resolveShopId(Long shopId) {
+  private long  resolveShopId(Long shopId) {
     if (shopId != null) {
       var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
       if (auth == null || !(auth.getPrincipal() instanceof com.ecom.analytics.security.AuthPrincipal principal)) {
