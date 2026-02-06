@@ -11,6 +11,7 @@ import { DashboardPageComponent } from './pages/dashboard/dashboard-page.compone
 import { OnboardingPageComponent } from './pages/onboarding/onboarding-page.component';
 import { UsersPageComponent } from './pages/users/users-page.component';
 import { ShopsPageComponent } from './pages/shops/shops-page.component';
+import { AuditPageComponent } from './pages/audit/audit-page.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ShopsPageComponent } from './pages/shops/shops-page.component';
     DashboardPageComponent,
     OnboardingPageComponent,
     UsersPageComponent,
-    ShopsPageComponent
+    ShopsPageComponent,
+    AuditPageComponent
   ],
   imports: [BrowserModule, FormsModule, HttpClientModule, AppRoutingModule],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],

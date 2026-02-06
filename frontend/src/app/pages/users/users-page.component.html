@@ -6,10 +6,6 @@
     </div>
     <div class="grid kpis">
       <div>
-        <label>Shop ID</label>
-        <input [(ngModel)]="shopId" type="number" />
-      </div>
-      <div>
         <label>Email filter</label>
         <input [(ngModel)]="email" type="text" />
       </div>
@@ -24,6 +20,7 @@
           <th>User ID</th>
           <th>Email</th>
           <th>Role</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -31,6 +28,9 @@
           <td>{{user.userId}}</td>
           <td>{{user.email}}</td>
           <td>{{user.role}}</td>
+          <td>
+            <button class="danger" (click)="softDelete(user.userId)">Soft Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>

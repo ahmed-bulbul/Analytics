@@ -30,7 +30,7 @@ public class ShopifyController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
   ) {
-    Shop shop = shopRepository.findById(shopId).orElseThrow();
+    Shop shop = shopRepository.findByIdAndDeletedAtIsNull(shopId).orElseThrow();
     String token = cryptoService.decrypt(shop.getShopifyAccessTokenEncrypted(), shop.getShopifyAccessTokenIv());
     return bulkService.startOrdersBulkOperation(shop.getShopDomain(), token, from, to);
   }
@@ -41,7 +41,7 @@ public class ShopifyController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
   ) {
-    Shop shop = shopRepository.findById(shopId).orElseThrow();
+    Shop shop = shopRepository.findByIdAndDeletedAtIsNull(shopId).orElseThrow();
     String token = cryptoService.decrypt(shop.getShopifyAccessTokenEncrypted(), shop.getShopifyAccessTokenIv());
     return bulkService.startCustomersBulkOperation(shop.getShopDomain(), token, from, to);
   }

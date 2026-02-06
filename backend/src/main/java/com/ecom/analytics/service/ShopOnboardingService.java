@@ -20,19 +20,22 @@ public class ShopOnboardingService {
   private final UserShopRepository userShopRepository;
   private final PasswordEncoder passwordEncoder;
   private final ShopifyOAuthService oauthService;
+  private final AuditService auditService;
 
   public ShopOnboardingService(
       ShopRepository shopRepository,
       UserRepository userRepository,
       UserShopRepository userShopRepository,
       PasswordEncoder passwordEncoder,
-      ShopifyOAuthService oauthService
+      ShopifyOAuthService oauthService,
+      AuditService auditService
   ) {
     this.shopRepository = shopRepository;
     this.userRepository = userRepository;
     this.userShopRepository = userShopRepository;
     this.passwordEncoder = passwordEncoder;
     this.oauthService = oauthService;
+    this.auditService = auditService;
   }
 
   public OnboardResponse onboard(OnboardRequest request) {
@@ -47,10 +50,10 @@ public class ShopOnboardingService {
     }
 
     String shopDomain = request.shopDomain().toLowerCase();
-    if (shopRepository.existsByShopDomainIgnoreCase(shopDomain)) {
+    if (shopRepository.existsByShopDomainIgnoreCaseAndDeletedAtIsNull(shopDomain)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Shop domain already exists. Use a different domain.");
     }
-    if (userRepository.findByEmailIgnoreCase(request.adminEmail()).isPresent()) {
+    if (userRepository.findByEmailIgnoreCaseAndDeletedAtIsNull(request.adminEmail()).isPresent()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin email already exists. Use a different email.");
     }
 
@@ -69,6 +72,13 @@ public class ShopOnboardingService {
 
     userShopRepository.save(new UserShop(user, shop));
 
+    auditService.recordAs("SHOP_ONBOARDED",
+        user.getId(),
+        user.getEmail(),
+        user.getId(),
+        shop.getId(),
+        java.util.Map.of("shopDomain", shopDomain));
+
     String oauthUrl = oauthService.buildAuthUrl(shop.getId(), shopDomain);
     return new OnboardResponse(shop.getId(), shopDomain, oauthUrl);
   }
@@ -76,5 +86,6 @@ public class ShopOnboardingService {
   public void handleCallbackByState(String code, String state) {
     Long shopId = oauthService.resolveShopIdByState(state);
     oauthService.handleCallback(shopId, code, state);
+    auditService.record("SHOP_OAUTH_CONNECTED", null, shopId, java.util.Map.of("state", state));
   }
 }

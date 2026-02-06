@@ -1,1 +1,10 @@
 :host { display: block; }
+
+.danger {
+  border: none;
+  background: #c0352b;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}

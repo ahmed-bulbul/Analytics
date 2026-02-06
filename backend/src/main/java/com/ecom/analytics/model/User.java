@@ -23,6 +23,12 @@ public class User {
   @Column(nullable = false)
   private String role;
 
+  @Column(name = "deleted_at")
+  private Instant deletedAt;
+
+  @Column(name = "deleted_by")
+  private Long deletedBy;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
@@ -69,5 +75,21 @@ public class User {
 
   public void setRole(String role) {
     this.role = role;
+  }
+
+  public Instant getDeletedAt() {
+    return deletedAt;
+  }
+
+  public void setDeletedAt(Instant deletedAt) {
+    this.deletedAt = deletedAt;
+  }
+
+  public Long getDeletedBy() {
+    return deletedBy;
+  }
+
+  public void setDeletedBy(Long deletedBy) {
+    this.deletedBy = deletedBy;
   }
 }

@@ -11,6 +11,42 @@
 <section class="section">
   <div class="card">
     <div class="card-header">
+      <h2>Sync Status</h2>
+      <div class="actions">
+        <button (click)="refreshSyncStatus()" [disabled]="syncLoading">
+          {{ syncLoading ? 'Refreshing…' : 'Refresh' }}
+        </button>
+      </div>
+    </div>
+    <p class="error-text" *ngIf="syncError">{{syncError}}</p>
+    <div class="grid kpis" *ngIf="!syncError">
+      <div>
+        <h3>{{syncStatus?.status ?? 'IDLE'}}</h3>
+        <p>Status</p>
+      </div>
+      <div>
+        <h3>{{syncStatus?.currentType ?? '—'}}</h3>
+        <p>Current Type</p>
+      </div>
+      <div>
+        <h3>{{syncStatus?.operationId ?? '—'}}</h3>
+        <p>Operation</p>
+      </div>
+      <div>
+        <h3>{{syncStatus?.updatedAt ? (syncStatus?.updatedAt | date:'medium') : '—'}}</h3>
+        <p>Last Bulk Update</p>
+      </div>
+      <div>
+        <h3>{{syncStatus?.lastIncrementalSyncAt ? (syncStatus?.lastIncrementalSyncAt | date:'medium') : '—'}}</h3>
+        <p>Last Incremental Sync</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="card">
+    <div class="card-header">
       <h2>Core KPIs</h2>
       <span class="badge">Shopify Derived</span>
     </div>

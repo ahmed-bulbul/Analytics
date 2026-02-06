@@ -18,19 +18,20 @@ public class IngestionJobs {
   private static final Logger log = LoggerFactory.getLogger(IngestionJobs.class);
 
   private final ShopRepository shopRepository;
-  private final ShopifyBulkService bulkService;
+  private final ShopifyBulkCoordinator bulkCoordinator;
   private final CryptoService cryptoService;
 
-  public IngestionJobs(ShopRepository shopRepository, ShopifyBulkService bulkService, CryptoService cryptoService) {
+  public IngestionJobs(ShopRepository shopRepository, ShopifyBulkCoordinator bulkCoordinator, CryptoService cryptoService) {
     this.shopRepository = shopRepository;
-    this.bulkService = bulkService;
+    this.bulkCoordinator = bulkCoordinator;
     this.cryptoService = cryptoService;
   }
 
-  @Scheduled(cron = "0 0 */4 * * *")
+  //@Scheduled(cron = "0 0 */4 * * *")
+  @Scheduled(cron = "*/30 * * * * *")
   @Transactional
   public void incrementalSync() {
-    List<Shop> shops = shopRepository.findByShopifyAccessTokenEncryptedIsNotNull();
+    List<Shop> shops = shopRepository.findByShopifyAccessTokenEncryptedIsNotNullAndDeletedAtIsNull();
     if (shops.isEmpty()) {
       log.info("No shops with Shopify tokens found for incremental sync");
       return;
@@ -48,8 +49,7 @@ public class IngestionJobs {
         LocalDate to = now.atZone(zone).toLocalDate();
 
         log.info("Starting incremental sync for shop {} from {} to {}", shop.getShopDomain(), from, to);
-        bulkService.startOrdersBulkOperation(shop.getShopDomain(), token, from, to);
-        bulkService.startCustomersBulkOperation(shop.getShopDomain(), token, from, to);
+        bulkCoordinator.tick(shop, token, from, to);
 
         shop.setLastIncrementalSyncAt(now);
         shopRepository.save(shop);

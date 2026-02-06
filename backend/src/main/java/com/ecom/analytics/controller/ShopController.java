@@ -10,6 +10,10 @@ import com.ecom.analytics.dto.ShopRow;
 import com.ecom.analytics.dto.UserShopRow;
 import com.ecom.analytics.service.ShopOnboardingService;
 import com.ecom.analytics.service.AccessService;
+import com.ecom.analytics.service.ShopifyHmacVerifier;
+import java.util.Map;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.ecom.analytics.security.AuthPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -27,15 +31,18 @@ public class ShopController {
   private final ShopOnboardingService onboardingService;
   private final AccessService accessService;
   private final String frontendUrl;
+  private final ShopifyHmacVerifier hmacVerifier;
 
   public ShopController(
       ShopOnboardingService onboardingService,
       AccessService accessService,
-      @Value("${app.frontend-url}") String frontendUrl
+      @Value("${app.frontend-url}") String frontendUrl,
+      ShopifyHmacVerifier hmacVerifier
   ) {
     this.onboardingService = onboardingService;
     this.accessService = accessService;
     this.frontendUrl = frontendUrl;
+    this.hmacVerifier = hmacVerifier;
   }
 
   @PostMapping("/onboard")
@@ -45,9 +52,13 @@ public class ShopController {
 
   @GetMapping("/onboard/callback")
   public ResponseEntity<String> callback(
-      @RequestParam String code,
-      @RequestParam String state
+      @RequestParam Map<String, String> params
   ) {
+    if (!hmacVerifier.verify(params)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid HMAC");
+    }
+    String code = params.get("code");
+    String state = params.get("state");
     onboardingService.handleCallbackByState(code, state);
     String redirect = frontendUrl + "?shopify=connected";
     return ResponseEntity.status(HttpStatus.FOUND)
@@ -105,6 +116,28 @@ public class ShopController {
     }
     if (!field.equals("domain")) {
       field = "domain";
+    }
+    return ResponseEntity.ok(accessService.listShopsForUser(userId, domain, normalizedLimit, normalizeOffset(offset), dir));
+  }
+
+  @GetMapping("/my")
+  public ResponseEntity<com.ecom.analytics.dto.PageResult<ShopRow>> listMyShops(
+      @AuthenticationPrincipal AuthPrincipal principal,
+      @RequestParam(required = false) String domain,
+      @RequestParam(defaultValue = "domain") String sortBy,
+      @RequestParam(defaultValue = "asc") String sortDir,
+      @RequestParam(defaultValue = "50") int limit,
+      @RequestParam(defaultValue = "0") int offset,
+      @RequestParam(required = false) String cursor
+  ) {
+    if (principal == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    String dir = normalizeSortDir(sortDir);
+    int normalizedLimit = normalizeLimit(limit);
+    long userId = principal.userId();
+    if (cursor != null) {
+      return ResponseEntity.ok(accessService.listShopsForUserCursor(userId, domain, normalizedLimit, dir, cursor));
     }
     return ResponseEntity.ok(accessService.listShopsForUser(userId, domain, normalizedLimit, normalizeOffset(offset), dir));
   }

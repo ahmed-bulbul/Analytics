@@ -16,9 +16,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
   private final JwtAuthFilter jwtAuthFilter;
+  private final RateLimitFilter rateLimitFilter;
+  private final RequestIdFilter requestIdFilter;
 
-  public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+  public SecurityConfig(JwtAuthFilter jwtAuthFilter, RateLimitFilter rateLimitFilter, RequestIdFilter requestIdFilter) {
     this.jwtAuthFilter = jwtAuthFilter;
+    this.rateLimitFilter = rateLimitFilter;
+    this.requestIdFilter = requestIdFilter;
   }
 
   @Bean
@@ -30,11 +34,16 @@ public class SecurityConfig {
             .requestMatchers("/api/shops/onboard/**").permitAll()
             .requestMatchers("/h2/**").permitAll()
             .requestMatchers("/api/auth/register").hasRole("ADMIN")
+            .requestMatchers("/api/shops/my").authenticated()
+            .requestMatchers("/api/audit/**").hasRole("ADMIN")
+            .requestMatchers("/api/admin/**").hasRole("ADMIN")
             .requestMatchers("/api/shops/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+        .addFilterBefore(requestIdFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterAfter(rateLimitFilter, RequestIdFilter.class)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .httpBasic(Customizer.withDefaults());
 

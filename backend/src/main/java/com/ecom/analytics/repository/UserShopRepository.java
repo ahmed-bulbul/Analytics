@@ -19,6 +19,8 @@ public interface UserShopRepository extends JpaRepository<UserShop, UserShopId> 
       join us.user u
       where us.shop.id = :shopId
         and (:email is null or lower(u.email) like lower(concat('%', :email, '%')))
+        and u.deletedAt is null
+        and us.shop.deletedAt is null
       order by u.email asc, u.id asc
       """)
   List<UserShopRow> findUsersForShop(@Param("shopId") long shopId, @Param("email") String email, Pageable pageable);
@@ -29,6 +31,8 @@ public interface UserShopRepository extends JpaRepository<UserShop, UserShopId> 
       join us.user u
       where us.shop.id = :shopId
         and (:email is null or lower(u.email) like lower(concat('%', :email, '%')))
+        and u.deletedAt is null
+        and us.shop.deletedAt is null
       """)
   long countUsersForShop(@Param("shopId") long shopId, @Param("email") String email);
 
@@ -38,6 +42,8 @@ public interface UserShopRepository extends JpaRepository<UserShop, UserShopId> 
       join us.shop s
       where us.user.id = :userId
         and (:domain is null or lower(s.shopDomain) like lower(concat('%', :domain, '%')))
+        and us.user.deletedAt is null
+        and s.deletedAt is null
       order by s.shopDomain asc, s.id asc
       """)
   List<ShopRow> findShopsForUser(@Param("userId") long userId, @Param("domain") String domain, Pageable pageable);
@@ -48,6 +54,8 @@ public interface UserShopRepository extends JpaRepository<UserShop, UserShopId> 
       join us.shop s
       where us.user.id = :userId
         and (:domain is null or lower(s.shopDomain) like lower(concat('%', :domain, '%')))
+        and us.user.deletedAt is null
+        and s.deletedAt is null
       """)
   long countShopsForUser(@Param("userId") long userId, @Param("domain") String domain);
 
@@ -59,6 +67,8 @@ public interface UserShopRepository extends JpaRepository<UserShop, UserShopId> 
         and (:email is null or lower(u.email) like lower(concat('%', :email, '%')))
         and (lower(u.email) > lower(:cursorEmail)
              or (lower(u.email) = lower(:cursorEmail) and u.id > :cursorId))
+        and u.deletedAt is null
+        and us.shop.deletedAt is null
       order by u.email asc, u.id asc
       """)
   List<UserShopRow> findUsersForShopCursorAsc(@Param("shopId") long shopId,
@@ -75,6 +85,8 @@ public interface UserShopRepository extends JpaRepository<UserShop, UserShopId> 
         and (:email is null or lower(u.email) like lower(concat('%', :email, '%')))
         and (lower(u.email) < lower(:cursorEmail)
              or (lower(u.email) = lower(:cursorEmail) and u.id < :cursorId))
+        and u.deletedAt is null
+        and us.shop.deletedAt is null
       order by u.email desc, u.id desc
       """)
   List<UserShopRow> findUsersForShopCursorDesc(@Param("shopId") long shopId,
@@ -91,6 +103,8 @@ public interface UserShopRepository extends JpaRepository<UserShop, UserShopId> 
         and (:domain is null or lower(s.shopDomain) like lower(concat('%', :domain, '%')))
         and (lower(s.shopDomain) > lower(:cursorDomain)
              or (lower(s.shopDomain) = lower(:cursorDomain) and s.id > :cursorId))
+        and us.user.deletedAt is null
+        and s.deletedAt is null
       order by s.shopDomain asc, s.id asc
       """)
   List<ShopRow> findShopsForUserCursorAsc(@Param("userId") long userId,
@@ -107,6 +121,8 @@ public interface UserShopRepository extends JpaRepository<UserShop, UserShopId> 
         and (:domain is null or lower(s.shopDomain) like lower(concat('%', :domain, '%')))
         and (lower(s.shopDomain) < lower(:cursorDomain)
              or (lower(s.shopDomain) = lower(:cursorDomain) and s.id < :cursorId))
+        and us.user.deletedAt is null
+        and s.deletedAt is null
       order by s.shopDomain desc, s.id desc
       """)
   List<ShopRow> findShopsForUserCursorDesc(@Param("userId") long userId,

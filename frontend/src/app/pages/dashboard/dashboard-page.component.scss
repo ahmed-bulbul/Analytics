@@ -1,3 +1,27 @@
 :host {
   display: block;
 }
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  border: none;
+  background: #c35a3a;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.actions button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: #b42318;
+  margin: 8px 0 0 0;
+}

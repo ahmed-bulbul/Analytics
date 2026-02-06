@@ -44,6 +44,12 @@ public class Shop {
   @Column(name = "updated_at", nullable = false)
   private Instant updatedAt;
 
+  @Column(name = "deleted_at")
+  private Instant deletedAt;
+
+  @Column(name = "deleted_by")
+  private Long deletedBy;
+
   @PrePersist
   public void prePersist() {
     Instant now = Instant.now();
@@ -134,5 +140,21 @@ public class Shop {
 
   public void setShopifyInstalledAt(Instant shopifyInstalledAt) {
     this.shopifyInstalledAt = shopifyInstalledAt;
+  }
+
+  public Instant getDeletedAt() {
+    return deletedAt;
+  }
+
+  public void setDeletedAt(Instant deletedAt) {
+    this.deletedAt = deletedAt;
+  }
+
+  public Long getDeletedBy() {
+    return deletedBy;
+  }
+
+  public void setDeletedBy(Long deletedBy) {
+    this.deletedBy = deletedBy;
   }
 }

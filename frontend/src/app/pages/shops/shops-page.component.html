@@ -6,15 +6,36 @@
     </div>
     <div class="grid kpis">
       <div>
-        <label>User ID</label>
-        <input [(ngModel)]="userId" type="number" />
-      </div>
-      <div>
         <label>Domain filter</label>
         <input [(ngModel)]="domain" type="text" />
       </div>
       <div style="align-self: end;">
         <button (click)="load()">Load</button>
+      </div>
+    </div>
+
+    <div class="grid kpis" style="margin-top: 16px;">
+      <div>
+        <label>Rate Limit Shop ID</label>
+        <input [(ngModel)]="rateShopId" type="number" />
+      </div>
+      <div>
+        <label>Capacity</label>
+        <input [(ngModel)]="rateCapacity" type="number" />
+      </div>
+      <div>
+        <label>Refill / Minute</label>
+        <input [(ngModel)]="rateRefill" type="number" />
+      </div>
+      <div>
+        <label>Enabled</label>
+        <select [(ngModel)]="rateEnabled">
+          <option [ngValue]="true">true</option>
+          <option [ngValue]="false">false</option>
+        </select>
+      </div>
+      <div style="align-self: end;">
+        <button (click)="updateRateLimit()">Apply Rate Limit</button>
       </div>
     </div>
 
@@ -25,6 +46,7 @@
           <th>Domain</th>
           <th>Timezone</th>
           <th>Currency</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -33,6 +55,9 @@
           <td>{{shop.shopDomain}}</td>
           <td>{{shop.timezone}}</td>
           <td>{{shop.currency}}</td>
+          <td>
+            <button class="danger" (click)="softDelete(shop.shopId)">Soft Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>

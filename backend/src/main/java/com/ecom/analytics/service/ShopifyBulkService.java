@@ -46,6 +46,24 @@ public class ShopifyBulkService {
     return postGraphql(shopDomain, accessToken, Map.of("query", query));
   }
 
+  public String currentBulkOperation(String shopDomain, String accessToken) {
+    String query = """
+      {
+        currentBulkOperation {
+          id
+          status
+          errorCode
+          objectCount
+          url
+          partialDataUrl
+          createdAt
+          completedAt
+        }
+      }
+      """;
+    return postGraphql(shopDomain, accessToken, Map.of("query", query));
+  }
+
   private String postGraphql(String shopDomain, String accessToken, Map<String, Object> payload) {
     RestClient client = RestClient.builder()
         .baseUrl("https://" + shopDomain + "/admin/api/" + config.getApiVersion())

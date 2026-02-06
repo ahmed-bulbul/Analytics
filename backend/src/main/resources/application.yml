@@ -9,6 +9,10 @@ app:
   cors:
     allowed-origins: http://localhost:4200
   frontend-url: http://localhost:4200
+  rate-limit:
+    enabled: true
+    capacity: 120
+    refill-per-minute: 120
 
 shopify:
   access-token: ${SHOPIFY_ACCESS_TOKEN:}

@@ -24,24 +24,34 @@ public class AccessService {
   private final UserShopRepository userShopRepository;
   private final UserRepository userRepository;
   private final ShopRepository shopRepository;
+  private final AuditService auditService;
 
-  public AccessService(UserShopRepository userShopRepository, UserRepository userRepository, ShopRepository shopRepository) {
+  public AccessService(UserShopRepository userShopRepository,
+                       UserRepository userRepository,
+                       ShopRepository shopRepository,
+                       AuditService auditService) {
     this.userShopRepository = userShopRepository;
     this.userRepository = userRepository;
     this.shopRepository = shopRepository;
+    this.auditService = auditService;
   }
 
   public GrantAccessResponse grantAccess(GrantAccessRequest request) {
-    User user = userRepository.findById(request.userId())
+    User user = userRepository.findByIdAndDeletedAtIsNull(request.userId())
         .orElseThrow(() -> new IllegalArgumentException("User not found"));
-    Shop shop = shopRepository.findById(request.shopId())
+    Shop shop = shopRepository.findByIdAndDeletedAtIsNull(request.shopId())
         .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
     userShopRepository.save(new UserShop(user, shop));
+    auditService.record("ACCESS_GRANTED", user.getId(), shop.getId(), java.util.Map.of(
+        "userEmail", user.getEmail(),
+        "shopDomain", shop.getShopDomain()
+    ));
     return new GrantAccessResponse(request.userId(), request.shopId(), "granted");
   }
 
   public RevokeAccessResponse revokeAccess(RevokeAccessRequest request) {
     userShopRepository.deleteById(new com.ecom.analytics.model.UserShopId(request.userId(), request.shopId()));
+    auditService.record("ACCESS_REVOKED", request.userId(), request.shopId(), java.util.Map.of());
     return new RevokeAccessResponse(request.userId(), request.shopId(), "revoked");
   }
 

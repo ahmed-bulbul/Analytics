@@ -1,0 +1,49 @@
+<section class="section">
+  <div class="card">
+    <div class="card-header">
+      <h2>Audit Logs</h2>
+      <span class="badge">Admin</span>
+    </div>
+
+    <div class="grid kpis">
+      <div>
+        <label>Action filter</label>
+        <input [(ngModel)]="action" type="text" placeholder="USER_CREATED" />
+      </div>
+      <div>
+        <label>Shop ID (optional)</label>
+        <input [(ngModel)]="shopId" type="number" />
+      </div>
+      <div style="align-self: end;">
+        <button (click)="load()">Load</button>
+      </div>
+    </div>
+
+    <p class="error-text" *ngIf="error">{{error}}</p>
+
+    <table class="table" style="margin-top: 16px;">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Action</th>
+          <th>Actor</th>
+          <th>Target User</th>
+          <th>Target Shop</th>
+          <th>IP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td>{{row.createdAt | date:'short'}}</td>
+          <td>{{row.action}}</td>
+          <td>{{row.actorEmail || row.actorUserId || '—'}}</td>
+          <td>{{row.targetUserId || '—'}}</td>
+          <td>{{row.targetShopId || '—'}}</td>
+          <td>{{row.ipAddress || '—'}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top: 8px;">Total: {{total}}</p>
+  </div>
+</section>

@@ -1,11 +1,20 @@
 <div class="app-shell">
   <aside class="sidebar">
     <div class="brand">Ecom Analytics</div>
+    <div class="shop-selector" *ngIf="isLoggedIn">
+      <label for="shopSelect">Active Shop</label>
+      <select id="shopSelect" [ngModel]="selectedShopId" (ngModelChange)="onShopChange($event)">
+        <option *ngFor="let shop of shops" [value]="shop.shopId">
+          {{shop.shopDomain}}
+        </option>
+      </select>
+    </div>
     <nav class="nav">
       <a *ngIf="isLoggedIn" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
       <a *ngIf="isLoggedIn" routerLink="/onboarding" routerLinkActive="active">Shop Onboarding</a>
       <a *ngIf="isLoggedIn" routerLink="/users" routerLinkActive="active">Users</a>
       <a *ngIf="isLoggedIn" routerLink="/shops" routerLinkActive="active">User Shops</a>
+      <a *ngIf="isLoggedIn" routerLink="/audit" routerLinkActive="active">Audit Logs</a>
       <a *ngIf="!isLoggedIn" routerLink="/login" routerLinkActive="active">Login</a>
     </nav>
     <div class="sidebar-footer" *ngIf="isLoggedIn">

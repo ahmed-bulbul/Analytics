@@ -22,21 +22,24 @@ public class AuthService {
   private final ShopRepository shopRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
+  private final AuditService auditService;
 
   public AuthService(UserRepository userRepository,
                      UserShopRepository userShopRepository,
                      ShopRepository shopRepository,
                      PasswordEncoder passwordEncoder,
-                     JwtService jwtService) {
+                     JwtService jwtService,
+                     AuditService auditService) {
     this.userRepository = userRepository;
     this.userShopRepository = userShopRepository;
     this.shopRepository = shopRepository;
     this.passwordEncoder = passwordEncoder;
     this.jwtService = jwtService;
+    this.auditService = auditService;
   }
 
   public LoginResponse login(LoginRequest request) {
-    Optional<User> userOpt = userRepository.findByEmailIgnoreCase(request.email());
+    Optional<User> userOpt = userRepository.findByEmailIgnoreCaseAndDeletedAtIsNull(request.email());
     if (userOpt.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
     }
@@ -44,6 +47,9 @@ public class AuthService {
     if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
     }
+//    if (user.getPrimaryShop() != null && user.getPrimaryShop().getDeletedAt() != null) {
+//      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account disabled");
+//    }
 
     String token = jwtService.generateToken(user.getEmail(), user.getPrimaryShop().getId(), user.getRole(), user.getId());
     return new LoginResponse(token, user.getPrimaryShop().getId(), user.getEmail());
@@ -59,11 +65,11 @@ public class AuthService {
     if (request.shopId() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "shopId is required");
     }
-    if (userRepository.findByEmailIgnoreCase(request.email()).isPresent()) {
+    if (userRepository.findByEmailIgnoreCaseAndDeletedAtIsNull(request.email()).isPresent()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
     }
 
-    var shop = shopRepository.findById(request.shopId())
+    var shop = shopRepository.findByIdAndDeletedAtIsNull(request.shopId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop not found"));
 
     String role = normalizeRole(request.role());
@@ -77,6 +83,11 @@ public class AuthService {
     user = userRepository.save(user);
 
     userShopRepository.save(new UserShop(user, shop));
+
+    auditService.record("USER_CREATED", user.getId(), shop.getId(), java.util.Map.of(
+        "email", user.getEmail(),
+        "role", role
+    ));
 
     return new RegisterResponse(user.getId(), user.getEmail(), role, shop.getId());
   }

@@ -21,16 +21,19 @@ public class ShopifyOAuthService {
   private final ShopRepository shopRepository;
   private final ShopOAuthStateRepository oauthStateRepository;
   private final CryptoService cryptoService;
+  private final AuditService auditService;
   private final RestClient restClient;
 
   public ShopifyOAuthService(ShopifyConfig config,
                              ShopRepository shopRepository,
                              ShopOAuthStateRepository oauthStateRepository,
-                             CryptoService cryptoService) {
+                             CryptoService cryptoService,
+                             AuditService auditService) {
     this.config = config;
     this.shopRepository = shopRepository;
     this.oauthStateRepository = oauthStateRepository;
     this.cryptoService = cryptoService;
+    this.auditService = auditService;
     this.restClient = RestClient.builder()
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
@@ -64,7 +67,7 @@ public class ShopifyOAuthService {
       throw new IllegalArgumentException("Invalid OAuth state");
     }
 
-    Shop shop = shopRepository.findById(shopId)
+    Shop shop = shopRepository.findByIdAndDeletedAtIsNull(shopId)
         .orElseThrow(() -> new IllegalStateException("Shop not found"));
 
     String url = "https://" + shop.getShopDomain() + "/admin/oauth/access_token";
@@ -95,6 +98,7 @@ public class ShopifyOAuthService {
     shopRepository.save(shop);
 
     oauthStateRepository.deleteById(shopId);
+    auditService.record("SHOPIFY_OAUTH_CONNECTED", null, shopId, java.util.Map.of("shopDomain", shop.getShopDomain()));
   }
 
   public long resolveShopIdByState(String state) {
