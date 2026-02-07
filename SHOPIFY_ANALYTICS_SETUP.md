@@ -156,16 +156,17 @@ Create a cron job to refresh aggregate tables daily:
 crontab -e
 
 # Add this line to run at 2 AM daily
-0 2 * * * /path/to/shopify_analytics_rollup_queries.sql | psql -h localhost -U postgres -d analytics
+0 2 * * * cat /path/to/shopify_analytics_rollup_queries.sql | psql -h localhost -U postgres -d analytics
 ```
 
 Or use a more robust approach with error logging:
 
 ```bash
-0 2 * * * PGPASSWORD=your_password psql -h localhost -U postgres -d analytics \
-  -f /path/to/shopify_analytics_rollup_queries.sql \
+0 2 * * * PGPASSWORD=your_password cat /path/to/shopify_analytics_rollup_queries.sql | psql -h localhost -U postgres -d analytics \
   >> /var/log/shopify_rollup.log 2>&1
 ```
+
+**Note**: The rollup queries use PostgreSQL-specific syntax. For H2, the Spring Boot application handles aggregations in Java code.
 
 ## Analysis Queries
 

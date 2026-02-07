@@ -572,6 +572,14 @@ cat > "$ROLLUP_QUERIES_FILE" << 'EOF'
 -- ============================================================================
 -- SHOPIFY ANALYTICS - ROLLUP QUERY EXAMPLES
 -- ============================================================================
+-- 
+-- NOTE: These queries use PostgreSQL syntax (DATE_TRUNC, AGE, INTERVAL, etc.)
+-- For H2, you would need to adapt these queries to H2-compatible syntax.
+-- The aggregate tables are created by both H2 and PostgreSQL versions,
+-- but these specific rollup queries are optimized for PostgreSQL.
+--
+-- For H2 users: The Spring Boot application handles aggregations in Java code.
+-- ============================================================================
 
 -- ============================================================================
 -- ROLLUP 1: Populate Daily Shop Aggregates from Fact Orders
@@ -864,6 +872,10 @@ echo ""
 print_info "SQL Scripts:"
 echo "  - Schema: $TMP_SQL_FILE"
 echo "  - Rollup Queries: $ROLLUP_QUERIES_FILE"
+if [[ "$DB_TYPE" == "h2" ]]; then
+    print_warning "  Note: Rollup queries use PostgreSQL syntax"
+    echo "         For H2, the Spring Boot app handles aggregations"
+fi
 echo ""
 print_info "Next Steps:"
 echo "  1. Review the generated SQL files"
