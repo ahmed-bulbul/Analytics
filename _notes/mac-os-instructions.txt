@@ -1,0 +1,4 @@
+1. brew install mycli
+2. open -a docker
+3. docker ps
+4. docker exec -it doris mysql -h 127.0.0.1 -P 9030 -uroot
