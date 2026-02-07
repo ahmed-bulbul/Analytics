@@ -7,6 +7,10 @@ This is a full v1 scaffold based on the spec in `Dev Assignment_ Ecom Analytics 
 - DB: H2 (in-memory, PostgreSQL compatibility mode)
 - Frontend: Angular (manual scaffold)
 
+**Database Setup**
+- 🚀 **Quick Setup**: Use `./setup_shopify_analytics.sh` to create dimension/fact tables and rollup operations
+- 📖 **Full Guide**: See [SHOPIFY_ANALYTICS_SETUP.md](SHOPIFY_ANALYTICS_SETUP.md) for detailed documentation
+
 **Backend**
 1. `cd backend`
 2. `mvn spring-boot:run`

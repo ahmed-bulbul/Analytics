@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  doris:
+    image: yagagagaga/doris-standalone:latest
+    container_name: doris
+    restart: unless-stopped
+    ports:
+      - "9030:9030"    # MySQL protocol (connect with mysql client)
+      - "8030:8030"    # FE web UI
+      - "8040:8040"    # BE web UI
+    volumes:
+      - doris_data:/opt/apache-doris/storage
+    environment:
+      TZ: "UTC"
+
+volumes:
+  doris_data:
