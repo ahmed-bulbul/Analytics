@@ -51,7 +51,7 @@ public class Shop {
   private Long deletedBy;
 
   @Column(name = "platform_type", nullable = false)
-  private String platformType = "shopify";
+  private String platformType;
 
   @Column(name = "platform_shop_id")
   private String platformShopId;
@@ -72,7 +72,7 @@ public class Shop {
   private String shopPlanName;
 
   @Column(name = "is_active", nullable = false)
-  private Boolean isActive = true;
+  private Boolean isActive;
 
   @PrePersist
   public void prePersist() {
