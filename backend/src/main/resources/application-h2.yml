@@ -13,7 +13,7 @@ spring:
       path: /h2
   sql:
     init:
-      mode: always
+      mode: never  # Disable schema.sql - use Flyway instead
 
 logging:
   level:
