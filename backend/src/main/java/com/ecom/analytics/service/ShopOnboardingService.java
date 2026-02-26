@@ -8,6 +8,7 @@ import com.ecom.analytics.model.UserShop;
 import com.ecom.analytics.repository.ShopRepository;
 import com.ecom.analytics.repository.UserRepository;
 import com.ecom.analytics.repository.UserShopRepository;
+import com.ecom.analytics.security.SecurityContextProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ShopOnboardingService {
   private final PasswordEncoder passwordEncoder;
   private final ShopifyOAuthService oauthService;
   private final AuditService auditService;
+  private final SecurityContextProvider provider;
 
   public ShopOnboardingService(
       ShopRepository shopRepository,
@@ -68,6 +70,8 @@ public class ShopOnboardingService {
     user.setPasswordHash(passwordEncoder.encode(request.adminPassword()));
     user.setPrimaryShop(shop);
     user.setRole("ADMIN");
+    user.setClientId(request.clientId());
+    user.setClientSecret(request.clientId());
     user = userRepository.save(user);
 
     userShopRepository.save(new UserShop(user, shop));
@@ -79,13 +83,14 @@ public class ShopOnboardingService {
         shop.getId(),
         java.util.Map.of("shopDomain", shopDomain));
 
-    String oauthUrl = oauthService.buildAuthUrl(shop.getId(), shopDomain);
+    String oauthUrl = oauthService.buildAuthUrl(shop.getId(), user.getClientId(), user.getClientSecret, user.getClientshopDomain);
     return new OnboardResponse(shop.getId(), shopDomain, oauthUrl);
   }
 
-  public void handleCallbackByState(String code, String state) {
+  public void handleCallbackByState(String code, String clientSecret) {
     Long shopId = oauthService.resolveShopIdByState(state);
-    oauthService.handleCallback(shopId, code, state);
+    User user = provider.<User>getUser().orElseGet(()->{throw new Exception("User is required");});
+    oauthService.handleCallback(shopId, clientId, clientSecret, code, state);
     auditService.record("SHOP_OAUTH_CONNECTED", null, shopId, java.util.Map.of("state", state));
   }
 }

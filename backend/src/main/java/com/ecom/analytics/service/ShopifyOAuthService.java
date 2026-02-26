@@ -39,11 +39,11 @@ public class ShopifyOAuthService {
         .build();
   }
 
-  public String buildAuthUrl(long shopId, String shopDomain) {
-    if (config.getOauthClientId() == null || config.getOauthClientId().isBlank()) {
+  public String buildAuthUrl(long shopId, String clientId, String clientSecret, String shopDomain) {
+    if (clientId == null || clientId.isBlank()) {
       throw new IllegalStateException("Shopify OAuth client ID is not configured. Set SHOPIFY_CLIENT_ID in backend/.env");
     }
-    if (config.getOauthClientSecret() == null || config.getOauthClientSecret().isBlank()) {
+    if (clientSecret == null || clientSecret.isBlank()) {
       throw new IllegalStateException("Shopify OAuth client secret is not configured. Set SHOPIFY_CLIENT_SECRET in backend/.env");
     }
     String state = UUID.randomUUID().toString();
@@ -53,13 +53,13 @@ public class ShopifyOAuthService {
     String redirect = URLEncoder.encode(config.getOauthRedirectUri(), StandardCharsets.UTF_8);
 
     return "https://" + shopDomain + "/admin/oauth/authorize" +
-        "?client_id=" + config.getOauthClientId() +
+        "?client_id=" + clientId +
         "&scope=" + scopes +
         "&redirect_uri=" + redirect +
         "&state=" + state;
   }
 
-  public void handleCallback(long shopId, String code, String state) {
+  public void handleCallback(long shopId, String clientId, String clientSecret, String code, String state) {
     String expected = oauthStateRepository.findById(shopId)
         .map(ShopOAuthState::getState)
         .orElse(null);
@@ -72,8 +72,8 @@ public class ShopifyOAuthService {
 
     String url = "https://" + shop.getShopDomain() + "/admin/oauth/access_token";
     Map<String, Object> payload = Map.of(
-        "client_id", config.getOauthClientId(),
-        "client_secret", config.getOauthClientSecret(),
+        "client_id", clientId,
+        "client_secret", clientSecret,
         "code", code
     );
 

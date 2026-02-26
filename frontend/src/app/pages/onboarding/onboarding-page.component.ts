@@ -9,6 +9,8 @@ import { OnboardRequest } from '../../models/onboarding.models';
 })
 export class OnboardingPageComponent {
   onboardShopDomain = '';
+  onboardAdminClientId = '';
+  onboardAdminClientSecret = '';
   onboardAdminEmail = '';
   onboardAdminPassword = '';
   onboardMessage?: string;
@@ -21,6 +23,8 @@ export class OnboardingPageComponent {
     this.onboardOauthUrl = undefined;
     const payload: OnboardRequest = {
       shopDomain: this.onboardShopDomain,
+      clientId: this.onboardAdminClientId,
+      clientSecret: this.onboardAdminClientSecret,
       adminEmail: this.onboardAdminEmail,
       adminPassword: this.onboardAdminPassword
     };
