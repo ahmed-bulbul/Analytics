@@ -50,11 +50,41 @@ public class Shop {
   @Column(name = "deleted_by")
   private Long deletedBy;
 
+  @Column(name = "platform_type", nullable = false)
+  private String platformType;
+
+  @Column(name = "platform_shop_id")
+  private String platformShopId;
+
+  @Column(name = "shop_name")
+  private String shopName;
+
+  @Column(name = "shop_owner_name")
+  private String shopOwnerName;
+
+  @Column(name = "shop_owner_email")
+  private String shopOwnerEmail;
+
+  @Column(name = "country_code", length = 2)
+  private String countryCode;
+
+  @Column(name = "shop_plan_name")
+  private String shopPlanName;
+
+  @Column(name = "is_active", nullable = false)
+  private Boolean isActive;
+
   @PrePersist
   public void prePersist() {
     Instant now = Instant.now();
     createdAt = now;
     updatedAt = now;
+    if (platformType == null) {
+      platformType = "shopify";
+    }
+    if (isActive == null) {
+      isActive = true;
+    }
   }
 
   @PreUpdate
@@ -156,5 +186,77 @@ public class Shop {
 
   public void setDeletedBy(Long deletedBy) {
     this.deletedBy = deletedBy;
+  }
+
+  public String getPlatformType() {
+    return platformType;
+  }
+
+  public void setPlatformType(String platformType) {
+    this.platformType = platformType;
+  }
+
+  public String getPlatformShopId() {
+    return platformShopId;
+  }
+
+  public void setPlatformShopId(String platformShopId) {
+    this.platformShopId = platformShopId;
+  }
+
+  public String getShopName() {
+    return shopName;
+  }
+
+  public void setShopName(String shopName) {
+    this.shopName = shopName;
+  }
+
+  public String getShopOwnerName() {
+    return shopOwnerName;
+  }
+
+  public void setShopOwnerName(String shopOwnerName) {
+    this.shopOwnerName = shopOwnerName;
+  }
+
+  public String getShopOwnerEmail() {
+    return shopOwnerEmail;
+  }
+
+  public void setShopOwnerEmail(String shopOwnerEmail) {
+    this.shopOwnerEmail = shopOwnerEmail;
+  }
+
+  public String getCountryCode() {
+    return countryCode;
+  }
+
+  public void setCountryCode(String countryCode) {
+    this.countryCode = countryCode;
+  }
+
+  public String getShopPlanName() {
+    return shopPlanName;
+  }
+
+  public void setShopPlanName(String shopPlanName) {
+    this.shopPlanName = shopPlanName;
+  }
+
+  public Boolean getIsActive() {
+    return isActive;
+  }
+
+  public void setIsActive(Boolean isActive) {
+    this.isActive = isActive;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
+
+  public Instant getUpdatedAt() {
+    return updatedAt;
   }
 }

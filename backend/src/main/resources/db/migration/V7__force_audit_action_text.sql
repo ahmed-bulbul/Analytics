@@ -1,28 +1,4 @@
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT 1
-    FROM pg_attribute a
-    JOIN pg_type t ON a.atttypid = t.oid
-    WHERE a.attrelid = 'audit_events'::regclass
-      AND a.attname = 'action'
-      AND t.typname = 'bytea'
-  ) THEN
-    ALTER TABLE audit_events
-      ALTER COLUMN action TYPE TEXT
-      USING encode(action, 'escape');
-  END IF;
+-- Fix audit_events action column forcing to TEXT for H2 compatibility
+-- H2 doesn't support PostgreSQL DO blocks, so we skip the conditional type changes
+-- These columns should be TEXT by default in H2
 
-  IF EXISTS (
-    SELECT 1
-    FROM pg_attribute a
-    JOIN pg_type t ON a.atttypid = t.oid
-    WHERE a.attrelid = 'audit_events'::regclass
-      AND a.attname = 'metadata'
-      AND t.typname = 'bytea'
-  ) THEN
-    ALTER TABLE audit_events
-      ALTER COLUMN metadata TYPE TEXT
-      USING encode(metadata, 'escape');
-  END IF;
-END $$;

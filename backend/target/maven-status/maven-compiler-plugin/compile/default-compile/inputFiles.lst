@@ -1,47 +1,102 @@
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/AnalyticsDashboardApplication.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/config/CorsConfig.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/config/SecurityConfig.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/config/ShopifyConfig.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/controller/AuthController.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/controller/DashboardController.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/controller/ShopController.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/controller/ShopifyController.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/ChannelRow.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/CohortRow.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/CompareResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/GrantAccessRequest.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/GrantAccessResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/GrowthResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/KpiResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/LoginRequest.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/LoginResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/LtvResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/OnboardRequest.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/OnboardResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/PageResult.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/PagedResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/RegisterRequest.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/RegisterResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/RevokeAccessRequest.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/RevokeAccessResponse.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/ShopInfo.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/ShopRow.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/dto/UserShopRow.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/model/AppUser.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/repository/DashboardRepository.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/repository/OAuthStateRepository.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/repository/ShopRepository.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/repository/UserRepository.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/repository/UserShopRepository.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/repository/UserWriteRepository.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/security/AuthPrincipal.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/security/JwtAuthFilter.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/AccessService.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/AuthService.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/CryptoService.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/DashboardService.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/IngestionJobs.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/JwtService.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/ShopOnboardingService.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/ShopifyClient.java
-/Users/bulbulahmed/Documents/New project/backend/src/main/java/com/ecom/analytics/service/ShopifyOAuthService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/AnalyticsDashboardApplication.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/config/CorsConfig.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/config/GlobalExceptionHandler.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/config/RateLimitFilter.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/config/RateLimitProperties.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/config/RequestIdFilter.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/config/SecurityConfig.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/config/ShopifyConfig.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/controller/AdminController.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/controller/AuditController.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/controller/AuthController.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/controller/DashboardController.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/controller/ShopController.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/controller/ShopifyController.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/controller/SyncStatusController.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/AuditEventRow.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/ChannelRow.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/CohortRow.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/CompareResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/CustomerDimensionDto.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/GrantAccessRequest.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/GrantAccessResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/GrowthResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/KpiResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/LoginRequest.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/LoginResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/LtvResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/OnboardRequest.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/OnboardResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/OrderBridgeDto.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/PageResult.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/PagedResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/RateLimitOverrideRequest.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/RegisterRequest.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/RegisterResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/RevokeAccessRequest.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/RevokeAccessResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/ShopDimensionDto.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/ShopInfo.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/ShopRow.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/SyncStatusResponse.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/dto/UserShopRow.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AggCustomerLtv.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AggCustomerLtvId.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AggLtvCohortMonth.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AggLtvCohortMonthId.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AggShopDay.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AggShopDayId.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AggShopDayWithSpend.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AggShopDayWithSpendId.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/AuditEvent.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/DimChannel.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/DimCustomer.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/DimCustomerId.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/FactChannelDay.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/FactChannelDayId.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/FactOrder.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/FactOrderId.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/Shop.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/ShopBulkState.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/ShopOAuthState.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/ShopPlatformCredentials.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/ShopRateLimit.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/User.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/UserShop.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/model/UserShopId.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/AggCustomerLtvRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/AggLtvCohortMonthRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/AggShopDayRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/AggShopDayWithSpendRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/AuditEventRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/DimCustomerRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/FactChannelDayRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/FactOrderRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/ShopBulkStateRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/ShopOAuthStateRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/ShopPlatformCredentialsRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/ShopRateLimitRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/ShopRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/UserRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/repository/UserShopRepository.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/security/AuthPrincipal.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/security/JwtAuthFilter.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/AccessService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/AdminSoftDeleteService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/AuditQueryService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/AuditService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/AuthService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/CryptoService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/DashboardService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/IngestionJobs.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/JwtService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/RateLimitOverrideService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/RequestContext.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/ShopOnboardingService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/ShopifyBulkCoordinator.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/ShopifyBulkProcessor.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/ShopifyBulkService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/ShopifyClient.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/ShopifyHmacVerifier.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/ShopifyOAuthService.java
+/home/runner/work/Analytics/Analytics/backend/src/main/java/com/ecom/analytics/service/SyncStatusService.java

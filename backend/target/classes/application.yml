@@ -1,8 +1,6 @@
 spring:
   profiles:
     active: prod
-  config:
-    import: optional:file:.env[.properties]
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -10,13 +8,17 @@ spring:
 app:
   cors:
     allowed-origins: http://localhost:4200
+  frontend-url: http://localhost:4200
+  rate-limit:
+    enabled: true
+    capacity: 120
+    refill-per-minute: 120
 
 shopify:
-  base-url: https://cssstudio-2.myshopify.com
-  access-token:
+  access-token: ${SHOPIFY_ACCESS_TOKEN:}
   api-version: 2024-07
-  oauth-client-id: 582d6ed717246fc35ea8064b491f51fd
-  oauth-client-secret: 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
+  oauth-client-id: ${SHOPIFY_CLIENT_ID}
+  oauth-client-secret: ${SHOPIFY_CLIENT_SECRET}
   oauth-redirect-uri: "http://localhost:8080/api/shops/onboard/callback"
   oauth-scopes: "read_orders,read_customers"
 
