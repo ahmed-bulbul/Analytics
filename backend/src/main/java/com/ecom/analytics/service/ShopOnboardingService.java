@@ -9,12 +9,14 @@ import com.ecom.analytics.repository.ShopRepository;
 import com.ecom.analytics.repository.UserRepository;
 import com.ecom.analytics.repository.UserShopRepository;
 import com.ecom.analytics.security.SecurityContextProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class ShopOnboardingService {
   private final ShopRepository shopRepository;
   private final UserRepository userRepository;
@@ -24,21 +26,21 @@ public class ShopOnboardingService {
   private final AuditService auditService;
   private final SecurityContextProvider provider;
 
-  public ShopOnboardingService(
-      ShopRepository shopRepository,
-      UserRepository userRepository,
-      UserShopRepository userShopRepository,
-      PasswordEncoder passwordEncoder,
-      ShopifyOAuthService oauthService,
-      AuditService auditService
-  ) {
-    this.shopRepository = shopRepository;
-    this.userRepository = userRepository;
-    this.userShopRepository = userShopRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.oauthService = oauthService;
-    this.auditService = auditService;
-  }
+//  public ShopOnboardingService(
+//      ShopRepository shopRepository,
+//      UserRepository userRepository,
+//      UserShopRepository userShopRepository,
+//      PasswordEncoder passwordEncoder,
+//      ShopifyOAuthService oauthService,
+//      AuditService auditService
+//  ) {
+//    this.shopRepository = shopRepository;
+//    this.userRepository = userRepository;
+//    this.userShopRepository = userShopRepository;
+//    this.passwordEncoder = passwordEncoder;
+//    this.oauthService = oauthService;
+//    this.auditService = auditService;
+//  }
 
   public OnboardResponse onboard(OnboardRequest request) {
     if (request.shopDomain() == null || request.shopDomain().isBlank()) {
@@ -83,14 +85,15 @@ public class ShopOnboardingService {
         shop.getId(),
         java.util.Map.of("shopDomain", shopDomain));
 
-    String oauthUrl = oauthService.buildAuthUrl(shop.getId(), user.getClientId(), user.getClientSecret, user.getClientshopDomain);
+    String oauthUrl = oauthService.buildAuthUrl(shop.getId(), user.getClientId(), user.getClientSecret(), shopDomain);
     return new OnboardResponse(shop.getId(), shopDomain, oauthUrl);
   }
 
-  public void handleCallbackByState(String code, String clientSecret) {
+  public void handleCallbackByState(String code, String state) {
     Long shopId = oauthService.resolveShopIdByState(state);
-    User user = provider.<User>getUser().orElseGet(()->{throw new Exception("User is required");});
-    oauthService.handleCallback(shopId, clientId, clientSecret, code, state);
+    User user = provider.<User>getUser()
+            .orElseThrow(() -> new RuntimeException("User is required"));
+    oauthService.handleCallback(shopId, user.getClientId(), user.getClientSecret(), code, state);
     auditService.record("SHOP_OAUTH_CONNECTED", null, shopId, java.util.Map.of("state", state));
   }
 }

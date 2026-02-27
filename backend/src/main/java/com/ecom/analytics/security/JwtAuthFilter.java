@@ -1,4 +1,4 @@
-package com.ecom.analytics.config;
+package com.ecom.analytics.security;
 
 import com.ecom.analytics.security.AuthPrincipal;
 import com.ecom.analytics.service.JwtService;

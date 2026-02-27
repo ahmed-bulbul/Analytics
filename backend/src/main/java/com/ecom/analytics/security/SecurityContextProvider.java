@@ -2,12 +2,14 @@ package com.ecom.analytics.security;
 
 import com.ecom.analytics.model.User;
 import com.ecom.analytics.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class SecurityContextProvider {
 
     private final UserRepository userRepository;
@@ -24,11 +26,11 @@ public class SecurityContextProvider {
     }
 
     public Long getCurrentUserId() {
-        return getPrincipal().map(AuthPrincipal::getUserId).orElse(null);
+        return getPrincipal().map(AuthPrincipal::userId).orElse(null);
     }
 
     public Long getCurrentShopId() {
-        return getPrincipal().map(AuthPrincipal::getShopId).orElse(null);
+        return getPrincipal().map(AuthPrincipal::shopId).orElse(null);
     }
 
     public Optional<User> getUser(){
